@@ -73,14 +73,7 @@ public class CsvItemModel {
 
       if (fields.size() == CSV_BOOK_COLUMN_SIZE) {
          final List<String> keys = CsvUtils.lineToFields(fields.get(CSV_BOOK_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
-         final Map<String, Author> authorMap = csvAuthorModel.getAuthorMap();
-         final Map<String, Author> bookAuthorMap = new HashMap<>();
-
-         for (String key : keys) {
-            bookAuthorMap.putIfAbsent(key, authorMap.getOrDefault(key, new Author()));
-         }
-
-         book.setAuthors(bookAuthorMap);
+         book.setAuthors(buildItemAuthorMap(keys));
          book.setTitle(fields.get(CSV_BOOK_TITLE_COLUMN_INDEX));
          book.setIsbn(new Isbn(fields.get(CSV_BOOK_ISBN_COLUMN_INDEX)));
          book.setDescription(fields.get(CSV_BOOK_BRIEFDESC_COLUMN_INDEX));
@@ -95,14 +88,7 @@ public class CsvItemModel {
 
       if (fields.size() == CSV_PAPER_COLUMN_SIZE) {
          final List<String> keys = CsvUtils.lineToFields(fields.get(CSV_PAPER_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
-         final Map<String, Author> authorMap = csvAuthorModel.getAuthorMap();
-         final Map<String, Author> paperAuthorMap = new HashMap<>();
-
-         for (String key : keys) {
-            paperAuthorMap.putIfAbsent(key, authorMap.getOrDefault(key, new Author()));
-         }
-
-         paper.setAuthors(paperAuthorMap);
+         paper.setAuthors(buildItemAuthorMap(keys));
          paper.setTitle(fields.get(CSV_PAPER_TITLE_COLUMN_INDEX));
          paper.setIsbn(new Isbn(fields.get(CSV_PAPER_ISBN_COLUMN_INDEX)));
          try {
@@ -115,5 +101,16 @@ public class CsvItemModel {
       return paper;
    }
 
+
+   private Map<String, Author> buildItemAuthorMap(final List<String> keys) {
+      final Map<String, Author> itemAuthorMap = new HashMap<>();
+      final Map<String, Author> authorMap = csvAuthorModel.getAuthorMap();
+
+      for (String key : keys) {
+         itemAuthorMap.putIfAbsent(key, authorMap.getOrDefault(key, new Author()));
+      }
+
+      return itemAuthorMap;
+   }
 
 }
