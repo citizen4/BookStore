@@ -7,11 +7,18 @@ import java.util.List;
 
 /**
  * Implementation of author service interface using csv model
+ * 
+ * Note: Candidat for a Singleton
  */
 public class CsvAuthorService implements AuthorService {
 
    private CsvAuthorModel csvAuthorModel;
 
+   /**
+    * Constructor
+    * 
+    * @param dataDirectory the path to the data base directory 
+    */
    public CsvAuthorService(final String dataDirectory) {
       csvAuthorModel = new CsvAuthorModel(dataDirectory);
    }
