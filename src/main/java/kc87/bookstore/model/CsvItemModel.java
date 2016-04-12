@@ -48,7 +48,12 @@ public class CsvItemModel {
       this.dataDirectory = dataDirectory;
       this.csvAuthorModel = new CsvAuthorModel(dataDirectory);
    }
-
+   
+   /**
+    * Returns a list of all item entities (books and papers).
+    * 
+    * @return list of item entities
+    */
    public List<Item> getItemList() {
       final List<Item> itemList = new ArrayList<>();
       final List<String> bookLines = CsvUtils.readCsvLines(dataDirectory, BOOK_DATA_FILE_NAME);
@@ -67,6 +72,12 @@ public class CsvItemModel {
    }
 
 
+   /**
+    * Maps a csv line (single data set) to a book entity
+    * 
+    * @param line a string containing a single csv data set
+    * @return book entity
+    */
    private Book mapLineToBook(final String line) {
       final Book book = new Book();
       final List<String> fields = CsvUtils.lineToFields(line, CSV_DELIMITER);
@@ -82,6 +93,12 @@ public class CsvItemModel {
       return book;
    }
 
+   /**
+    * Maps a csv line (single data set) to a paper entity.
+    * 
+    * @param line a string containing a single csv data set
+    * @return paper entity
+    */
    private Paper mapLineToPaper(final String line) {
       final Paper paper = new Paper();
       final List<String> fields = CsvUtils.lineToFields(line, CSV_DELIMITER);
@@ -101,7 +118,12 @@ public class CsvItemModel {
       return paper;
    }
 
-
+   /**
+    * Returns a map containing all author entities defined by the given key list.
+    * 
+    * @param keys the list of keys referencing authors (here the e-mail is used)
+    * @return map of author entities
+    */
    private Map<String, Author> buildItemAuthorMap(final List<String> keys) {
       final Map<String, Author> itemAuthorMap = new HashMap<>();
       final Map<String, Author> authorMap = csvAuthorModel.getAuthorMap();
