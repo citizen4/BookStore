@@ -12,13 +12,18 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
- * Main class
+ * Main class: show functionality
  */
 public class App {
    public static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
    public static final String DATA_BASE_DIR = "/home/soul/devel/task/data";
    public static final ItemService itemService = new CsvItemService(DATA_BASE_DIR);
 
+   /**
+    * Print an Item (Book or Paper) to console including all details
+    * 
+    * @param item the item to be printed
+    */
    public static void printItem(final Item item) {
       String type = "[Item]";
       if (item.getType() == Item.Type.Book) {
@@ -45,12 +50,21 @@ public class App {
       System.out.println("\n");
    }
 
+   /**
+    * Show all Books and Papers 
+    */
    public static void printAllItems() {
       for (Item item : itemService.findAll()) {
          printItem(item);
       }
    }
 
+   /**
+    * Find a Book or a Paper by ISBN and show it.
+    * If non was found show an error message.
+    * 
+    * @param isbnValue ISBN as simple String
+    */
    public static void printItemByIsbn(final String isbnValue) {
       final Item result = itemService.findByIsbn(new Isbn(isbnValue));
 
@@ -58,10 +72,17 @@ public class App {
          System.out.println("Item found for ISBN '" + isbnValue + "':");
          printItem(result);
       } else {
-         System.out.println("No item found that matches the given ISBN!");
+         System.err.println("No item found that matches the given ISBN!");
       }
    }
 
+   /**
+    * Find and show all Books and Papers written by a given author.
+    * If non was found show an error message.
+    * 
+    * @param firstName the first name of the author
+    * @param lastName the last name of the author
+    */
    public static void printAllItemsByAuthor(final String firstName, final String lastName) {
       final List<Item> resultList = itemService.findByAuthor(firstName, lastName);
 
@@ -71,11 +92,14 @@ public class App {
             printItem(item);
          }
       } else {
-         System.out.println("No item found that matches the given author name!");
+         System.err.println("No item found that matches the given author name!");
       }
 
    }
 
+   /**
+    *  Show all Books and Papers sorted by title.
+    */
    public static void printAllItemsSortedByTitle() {
       for (Item item : itemService.findAllSorted((item1, item2) -> item1.getTitle().compareTo(item2.getTitle()))) {
          printItem(item);
