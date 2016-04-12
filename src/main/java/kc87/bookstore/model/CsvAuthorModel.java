@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ *   Map csv data to collections of author entities
  */
 public class CsvAuthorModel {
-
+   /* Constants to parse the author CSV file structure */
    private static final char CSV_DELIMITER = ';';
    private static final int CSV_AUTHOR_COLUMN_SIZE = 3;
    private static final int CSV_AUTHOR_EMAIL_COLUMN_INDEX = 0;
@@ -26,6 +26,11 @@ public class CsvAuthorModel {
       this.dataDirectory = dataDirectory;
    }
 
+   /**
+    * Returns a hash map of author entities using the author's e-mail address as key.
+    * 
+    * @return map containing author entities referenced by e-mail
+    */
    public Map<String, Author> getAuthorMap() {
       final Map<String, Author> resultMap = new HashMap<>();
       final List<String> authorLines = CsvUtils.readCsvLines(dataDirectory, AUTHOR_DATA_FILE_NAME);
@@ -38,10 +43,21 @@ public class CsvAuthorModel {
       return resultMap;
    }
 
+   /**
+    * Returns a list of all author entities.
+    * 
+    * @return list of author entities
+    */
    public List<Author> getAuthorList() {
       return new ArrayList<>(getAuthorMap().values());
    }
 
+   /**
+    * Maps a csv line (single data set) to an author entity
+    * 
+    * @param line a string containing a single csv data set
+    * @return author entity
+    */
    private Author mapLineToAuthor(final String line) {
       final Author author = new Author();
       final List<String> fields = CsvUtils.lineToFields(line, CSV_DELIMITER);
