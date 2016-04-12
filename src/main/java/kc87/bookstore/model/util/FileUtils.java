@@ -13,6 +13,13 @@ import java.util.List;
  */
 public class FileUtils {
 
+   /**
+    * Returns a list of strings where every string contains a single line of the given text file.
+    * 
+    * @param file the Path object representing a text file
+    * @param charSet string defining the (hopefully) used character encoding of the file
+    * @return list of lines presented by strings
+    */
    public static List<String> readLines(final Path file, final String charSet) {
       final List<String> lines = new ArrayList<>();
 
