@@ -10,7 +10,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Implementation of the item service interface using csv model
+ * Implementation of the item service interface using csv model.
+ * 
+ * Note: Candidat for a Singleton.
  */
 public class CsvItemService implements ItemService {
 
