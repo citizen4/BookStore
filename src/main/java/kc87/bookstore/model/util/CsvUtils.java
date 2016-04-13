@@ -8,11 +8,20 @@ import java.util.List;
 
 /**
  * CSV helper class
+ *
+ * TODO: Write unit tests for this class!
  */
 public class CsvUtils {
 
-   private static final String CHARACTER_SET = "ISO-8859-15"; // UTF-8 !! It's 2016 not 1996!
+   private String characterSet = "ISO-8859-15"; // UTF-8 !! It's 2016 not 1996!
 
+   public String getCharacterSet() {
+      return characterSet;
+   }
+
+   public void setCharacterSet(String characterSet) {
+      this.characterSet = characterSet;
+   }
 
    /**
     * Split a string into a list of sub strings
@@ -30,6 +39,7 @@ public class CsvUtils {
    /**
     * Read all lines from a csv file into a list of strings.
     * The first line is ignored because it should be the csv fields header!!
+    * In case of an empty file just return an empty list.
     *
     * @param dataDirectory the data base directory
     * @param csvFileName   the csv file name
@@ -38,7 +48,7 @@ public class CsvUtils {
    public List<String> readLinesFromFile(final String dataDirectory, final String csvFileName) {
       final Path csvPath = Paths.get(dataDirectory, csvFileName);
       final List<String> resultList = new ArrayList<>();
-      final List<String> csvLines = FileUtils.readLines(csvPath, CHARACTER_SET);
+      final List<String> csvLines = FileUtils.readLines(csvPath, characterSet);
 
       if (csvLines.size() > 0) {
          /* Skip CSV header line */

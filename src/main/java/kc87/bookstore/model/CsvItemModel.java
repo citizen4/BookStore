@@ -15,16 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *   Map csv data to collections of item entities
  *
+ *   @see kc87.bookstore.model.ItemModel for ducumentation
  */
 public class CsvItemModel implements ItemModel {
    private static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-   private static final char CSV_DELIMITER = ';';
-   private static final char AUTHOR_DELIMITER = ',';
-
    private static final String BOOK_DATA_FILE_NAME = "buecher.csv";
    private static final String PAPER_DATA_FILE_NAME = "zeitschriften.csv";
+
+   /* Constants to parse the book and paper csv files structure */
+   private static final char CSV_DELIMITER = ';';
+   private static final char AUTHOR_DELIMITER = ',';
 
    private static final int CSV_BOOK_COLUMN_SIZE = 4;
    private static final int CSV_PAPER_COLUMN_SIZE = 4;
@@ -53,11 +56,7 @@ public class CsvItemModel implements ItemModel {
       this.authorModel = new CsvAuthorModel(dataDirectory);
    }
    
-   /**
-    * Returns a list of all item entities (books and papers).
-    * 
-    * @return list of item entities
-    */
+
    @Override
    public List<Item> getItemList() {
       final List<Item> itemList = new ArrayList<>();

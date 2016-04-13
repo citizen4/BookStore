@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
- *
+ * Unit tests for CsvAuthorModel class
  */
 public class CsvAuthorModelTest {
 

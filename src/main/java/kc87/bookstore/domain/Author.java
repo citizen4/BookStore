@@ -1,7 +1,7 @@
 package kc87.bookstore.domain;
 
 /**
- * A concrete entity class presenting an Author
+ * An entity class presenting an Author
  */
 public class Author {
 
@@ -9,7 +9,7 @@ public class Author {
 
    private String firstName = UNSPECIFIED_STRING;
    private String lastName = UNSPECIFIED_STRING;
-   private String email = UNSPECIFIED_STRING;
+   private String email = "n/a";
 
 
    public String getFirstName() {

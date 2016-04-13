@@ -5,7 +5,7 @@ package kc87.bookstore.domain;
  */
 public class Book extends Item {
 
-   private String description = UNSPECIFIED_STRING;
+   private String description = "";
 
    public Book() {
       super(Type.Book);

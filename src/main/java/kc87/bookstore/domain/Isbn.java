@@ -1,7 +1,8 @@
 package kc87.bookstore.domain;
 
 /**
- *
+ * A class representing an ISBN
+ * Note: A real ISBN can be validated
  */
 public class Isbn {
 

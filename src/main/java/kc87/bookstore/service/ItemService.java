@@ -26,6 +26,14 @@ public interface ItemService {
    List<Item> findAllSorted(final Comparator<Item> comparator);
 
    /**
+    * Returns a list of all items (books and papers) sorted by item title.
+    *
+    *
+    * @return list of item entities sorted by title
+    */
+   List<Item> findAllSortedByTitle();
+
+   /**
     * Returns a list of all items (books and papers) written by a given author's name
     * 
     * @param firstName the first name of the author

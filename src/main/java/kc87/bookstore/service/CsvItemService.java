@@ -12,8 +12,9 @@ import java.util.List;
 
 /**
  * Implementation of the item service interface.
- * 
  * Note: Candidate for a Singleton.
+ *
+ * @see kc87.bookstore.service.ItemService for documenation
  */
 public class CsvItemService implements ItemService {
 
@@ -22,9 +23,6 @@ public class CsvItemService implements ItemService {
 
    /**
     * Constructor
-    *
-    * @param itemModel
-    * @param authorModel
     */
    public CsvItemService(final ItemModel itemModel, final AuthorModel authorModel) {
       this.authorModel = authorModel;
@@ -41,6 +39,11 @@ public class CsvItemService implements ItemService {
       List<Item> sortedList = findAll();
       sortedList.sort(comparator);
       return sortedList;
+   }
+
+   @Override
+   public List<Item> findAllSortedByTitle() {
+      return findAllSorted((item1, item2) -> item1.getTitle().compareTo(item2.getTitle()));
    }
 
    @Override

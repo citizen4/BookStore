@@ -15,6 +15,8 @@ public class FileUtils {
 
    /**
     * Returns a list of strings where every string contains a single line of the given text file.
+    * In case of an IO-Exception there is nothing useful left to do! So we finish by throwing
+    * a Runtime-Exception
     * 
     * @param file the Path object representing a text file
     * @param charSet string defining the (hopefully) used character encoding of the file
@@ -30,8 +32,8 @@ public class FileUtils {
             lines.add(line);
          }
       } catch (IOException e) {
-         e.printStackTrace();
          System.err.println("Can't read data file: " + e.getMessage());
+         throw new RuntimeException("File IO error");
       }
 
       return lines;

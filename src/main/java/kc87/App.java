@@ -1,6 +1,5 @@
 package kc87;
 
-import com.google.gson.Gson;
 import kc87.bookstore.domain.Author;
 import kc87.bookstore.domain.Book;
 import kc87.bookstore.domain.Isbn;
@@ -10,8 +9,6 @@ import kc87.bookstore.model.AuthorModel;
 import kc87.bookstore.model.CsvAuthorModel;
 import kc87.bookstore.model.CsvItemModel;
 import kc87.bookstore.model.ItemModel;
-import kc87.bookstore.service.AuthorService;
-import kc87.bookstore.service.CsvAuthorService;
 import kc87.bookstore.service.CsvItemService;
 import kc87.bookstore.service.ItemService;
 
@@ -23,7 +20,8 @@ import java.util.List;
  */
 public class App {
    public static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-   public static final String DATA_BASE_DIR = "/home/soul/devel/task/data";
+   public static final String DATA_BASE_DIR = "/tmp/data";
+   //public static final String DATA_BASE_DIR = "data";
 
    public static final ItemModel itemModel = new CsvItemModel(DATA_BASE_DIR);
    public static final AuthorModel authorModel = new CsvAuthorModel(DATA_BASE_DIR);
@@ -65,8 +63,7 @@ public class App {
     */
    public static void printAllItems() {
       for (Item item : itemService.findAll()) {
-         //printItem(item);
-         printItemAsJson(item);
+         printItem(item);
       }
    }
 
@@ -112,20 +109,8 @@ public class App {
     *  Show all Books and Papers sorted by title.
     */
    public static void printAllItemsSortedByTitle() {
-      for (Item item : itemService.findAllSorted((item1, item2) -> item1.getTitle().compareTo(item2.getTitle()))) {
+      for (Item item : itemService.findAllSortedByTitle()) {
          printItem(item);
-      }
-   }
-
-
-   public static void printItemAsJson(final Item item) {
-      Gson gson = new Gson();
-      if (item.getType() == Item.Type.Book) {
-         System.out.println(gson.toJson(item, Book.class));
-      } else if (item.getType() == Item.Type.Paper) {
-         System.out.println(gson.toJson(item, Paper.class));
-      } else {
-         System.out.println(gson.toJson(item, Item.class));
       }
    }
 
@@ -133,13 +118,11 @@ public class App {
    public static void main(String[] args) {
       System.out.println("\n\n\t\t\t*** Print all items ***\n");
       printAllItems();
-      /*
       System.out.println("\n\n\t\t\t*** Print item by ISBN ***\n");
       printItemByIsbn("2365-5632-7854");
       System.out.println("\n\n\t\t\t*** Print items by author ***\n");
       printAllItemsByAuthor("Werner", "Lieblich");
       System.out.println("\n\n\t\t\t*** Print all items sorted by title ***\n");
       printAllItemsSortedByTitle();
-      */
    }
 }

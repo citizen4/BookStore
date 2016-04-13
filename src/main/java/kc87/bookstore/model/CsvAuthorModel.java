@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  *   Map csv data to collections of author entities
+ *
+ *   @see kc87.bookstore.model.AuthorModel for ducumentation
  */
 public class CsvAuthorModel implements AuthorModel {
    /* Constants to parse the author CSV file structure */
@@ -36,11 +38,6 @@ public class CsvAuthorModel implements AuthorModel {
       this.csvUtils = csvUtils;
    }
 
-   /**
-    * Returns a hash map of author entities using the author's e-mail address as key.
-    * 
-    * @return map containing author entities referenced by e-mail
-    */
    @Override
    public Map<String, Author> getAuthorMap() {
       final Map<String, Author> resultMap = new HashMap<>();
@@ -54,11 +51,6 @@ public class CsvAuthorModel implements AuthorModel {
       return resultMap;
    }
 
-   /**
-    * Returns a list of all author entities.
-    * 
-    * @return list of author entities
-    */
    @Override
    public List<Author> getAuthorList() {
       return new ArrayList<>(getAuthorMap().values());
