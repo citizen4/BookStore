@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  *
  */
-public class CsvItemModel {
+public class CsvItemModel implements ItemModel {
    private static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
    private static final char CSV_DELIMITER = ';';
@@ -39,14 +39,18 @@ public class CsvItemModel {
    private static final int CSV_PAPER_AUTHOR_COLUMN_INDEX = 2;
    private static final int CSV_PAPER_RELEASE_COLUMN_INDEX = 3;
 
-
+   private final CsvUtils csvUtils = new CsvUtils();
    private final String dataDirectory;
-   private final CsvAuthorModel csvAuthorModel;
+   private final AuthorModel authorModel;
 
-
+   /**
+    * Constructor
+    *
+    * @param dataDirectory the path to the data base directory
+    */
    public CsvItemModel(final String dataDirectory) {
       this.dataDirectory = dataDirectory;
-      this.csvAuthorModel = new CsvAuthorModel(dataDirectory);
+      this.authorModel = new CsvAuthorModel(dataDirectory);
    }
    
    /**
@@ -54,15 +58,16 @@ public class CsvItemModel {
     * 
     * @return list of item entities
     */
+   @Override
    public List<Item> getItemList() {
       final List<Item> itemList = new ArrayList<>();
-      final List<String> bookLines = CsvUtils.readCsvLines(dataDirectory, BOOK_DATA_FILE_NAME);
+      final List<String> bookLines = csvUtils.readLinesFromFile(dataDirectory, BOOK_DATA_FILE_NAME);
 
       for (String line : bookLines) {
          itemList.add(mapLineToBook(line));
       }
 
-      final List<String> paperLines = CsvUtils.readCsvLines(dataDirectory, PAPER_DATA_FILE_NAME);
+      final List<String> paperLines = csvUtils.readLinesFromFile(dataDirectory, PAPER_DATA_FILE_NAME);
 
       for (String line : paperLines) {
          itemList.add(mapLineToPaper(line));
@@ -80,10 +85,10 @@ public class CsvItemModel {
     */
    private Book mapLineToBook(final String line) {
       final Book book = new Book();
-      final List<String> fields = CsvUtils.lineToFields(line, CSV_DELIMITER);
+      final List<String> fields = csvUtils.lineToFields(line, CSV_DELIMITER);
 
       if (fields.size() == CSV_BOOK_COLUMN_SIZE) {
-         final List<String> keys = CsvUtils.lineToFields(fields.get(CSV_BOOK_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
+         final List<String> keys = csvUtils.lineToFields(fields.get(CSV_BOOK_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
          book.setAuthors(buildItemAuthorMap(keys));
          book.setTitle(fields.get(CSV_BOOK_TITLE_COLUMN_INDEX));
          book.setIsbn(new Isbn(fields.get(CSV_BOOK_ISBN_COLUMN_INDEX)));
@@ -101,10 +106,10 @@ public class CsvItemModel {
     */
    private Paper mapLineToPaper(final String line) {
       final Paper paper = new Paper();
-      final List<String> fields = CsvUtils.lineToFields(line, CSV_DELIMITER);
+      final List<String> fields = csvUtils.lineToFields(line, CSV_DELIMITER);
 
       if (fields.size() == CSV_PAPER_COLUMN_SIZE) {
-         final List<String> keys = CsvUtils.lineToFields(fields.get(CSV_PAPER_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
+         final List<String> keys = csvUtils.lineToFields(fields.get(CSV_PAPER_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
          paper.setAuthors(buildItemAuthorMap(keys));
          paper.setTitle(fields.get(CSV_PAPER_TITLE_COLUMN_INDEX));
          paper.setIsbn(new Isbn(fields.get(CSV_PAPER_ISBN_COLUMN_INDEX)));
@@ -126,7 +131,7 @@ public class CsvItemModel {
     */
    private Map<String, Author> buildItemAuthorMap(final List<String> keys) {
       final Map<String, Author> itemAuthorMap = new HashMap<>();
-      final Map<String, Author> authorMap = csvAuthorModel.getAuthorMap();
+      final Map<String, Author> authorMap = authorModel.getAuthorMap();
 
       for (String key : keys) {
          itemAuthorMap.putIfAbsent(key, authorMap.getOrDefault(key, new Author()));

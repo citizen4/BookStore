@@ -1,26 +1,26 @@
 package kc87.bookstore.service;
 
 import kc87.bookstore.domain.Author;
-import kc87.bookstore.model.CsvAuthorModel;
+import kc87.bookstore.model.AuthorModel;
 
 import java.util.List;
 
 /**
  * Implementation of author service interface using csv model
  * 
- * Note: Candidat for a Singleton
+ * Note: Candidate for a Singleton
  */
 public class CsvAuthorService implements AuthorService {
 
-   private CsvAuthorModel csvAuthorModel;
+   private final AuthorModel csvAuthorModel;
 
    /**
     * Constructor
     * 
-    * @param dataDirectory the path to the data base directory 
+    * @param csvAuthorModel the path to the data base directory
     */
-   public CsvAuthorService(final String dataDirectory) {
-      csvAuthorModel = new CsvAuthorModel(dataDirectory);
+   public CsvAuthorService(final AuthorModel csvAuthorModel) {
+      this.csvAuthorModel = csvAuthorModel;
    }
 
    @Override
@@ -29,10 +29,8 @@ public class CsvAuthorService implements AuthorService {
    }
 
    @Override
-   public Author findByName(String firstName, String lastName) {
-      final List<Author> authorList = findAll();
-
-      for (Author author : authorList) {
+   public Author findByName(final String firstName, final String lastName) {
+      for (Author author : findAll()) {
          if (author.getFirstName().equalsIgnoreCase(firstName) &&
                  author.getLastName().equalsIgnoreCase(lastName)) {
             return author;

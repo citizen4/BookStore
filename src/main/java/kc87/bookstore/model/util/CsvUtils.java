@@ -21,7 +21,7 @@ public class CsvUtils {
     * @param delimiter the character which separates the sub strings
     * @return list of sub strings
     */
-   public static List<String> lineToFields(final String line, final char delimiter) {
+   public List<String> lineToFields(final String line, final char delimiter) {
       String[] tmp = line.split(String.format("%c", delimiter));
       return Arrays.asList(tmp);
    }
@@ -35,7 +35,7 @@ public class CsvUtils {
     * @param csvFileName   the csv file name
     * @return a list of strings containing actual data (one data set per string)
     */
-   public static List<String> readCsvLines(final String dataDirectory, final String csvFileName) {
+   public List<String> readLinesFromFile(final String dataDirectory, final String csvFileName) {
       final Path csvPath = Paths.get(dataDirectory, csvFileName);
       final List<String> resultList = new ArrayList<>();
       final List<String> csvLines = FileUtils.readLines(csvPath, CHARACTER_SET);
