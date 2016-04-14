@@ -25,6 +25,11 @@ public class CsvItemService implements ItemService {
     * Constructor
     */
    public CsvItemService(final ItemModel itemModel, final AuthorModel authorModel) {
+
+      if(itemModel == null || authorModel == null) {
+         throw new IllegalArgumentException("Models must not be null!");
+      }
+
       this.authorModel = authorModel;
       this.itemModel = itemModel;
    }
@@ -36,6 +41,11 @@ public class CsvItemService implements ItemService {
 
    @Override
    public List<Item> findAllSorted(Comparator<Item> comparator) {
+
+      if(comparator == null) {
+         throw new IllegalArgumentException("Comparator must not be null!");
+      }
+
       List<Item> sortedList = findAll();
       sortedList.sort(comparator);
       return sortedList;
@@ -48,6 +58,11 @@ public class CsvItemService implements ItemService {
 
    @Override
    public List<Item> findByAuthor(final String firstName, final String lastName) {
+
+      if(firstName == null || lastName == null) {
+         throw new IllegalArgumentException("Names must not be null!");
+      }
+
       List<Author> authorList = authorModel.getAuthorList();
 
       for(Author author: authorList) {
@@ -57,11 +72,16 @@ public class CsvItemService implements ItemService {
          }
       }
 
-      return null;
+      return new ArrayList<>();
    }
 
    @Override
    public List<Item> findByAuthor(final String key) {
+
+      if(key == null) {
+         throw new IllegalArgumentException("Key must not be null!");
+      }
+
       final List<Item> resultList = new ArrayList<>();
 
       for (Item item : findAll()) {
@@ -75,7 +95,13 @@ public class CsvItemService implements ItemService {
 
    @Override
    public Item findByIsbn(Isbn isbn) {
+
+      if(isbn == null) {
+         throw new IllegalArgumentException("ISBN must not be null!");
+      }
+
       for (Item item : findAll()) {
+         //System.out.println(item.getIsbn());
          if (item.getIsbn().equals(isbn)) {
             return item;
          }

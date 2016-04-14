@@ -52,6 +52,10 @@ public class CsvItemModel implements ItemModel {
     * @param dataDirectory the path to the data base directory
     */
    public CsvItemModel(final String dataDirectory) {
+      if(dataDirectory == null) {
+         throw new IllegalArgumentException("Data directory must not be null!");
+      }
+
       this.dataDirectory = dataDirectory;
       this.authorModel = new CsvAuthorModel(dataDirectory);
    }
@@ -63,13 +67,19 @@ public class CsvItemModel implements ItemModel {
       final List<String> bookLines = csvUtils.readLinesFromFile(dataDirectory, BOOK_DATA_FILE_NAME);
 
       for (String line : bookLines) {
-         itemList.add(mapLineToBook(line));
+         final Book book = mapLineToBook(line);
+         if(book != null) {
+            itemList.add(book);
+         }
       }
 
       final List<String> paperLines = csvUtils.readLinesFromFile(dataDirectory, PAPER_DATA_FILE_NAME);
 
       for (String line : paperLines) {
-         itemList.add(mapLineToPaper(line));
+         final Paper paper = mapLineToPaper(line);
+         if(paper != null) {
+            itemList.add(paper);
+         }
       }
 
       return itemList;
@@ -83,31 +93,42 @@ public class CsvItemModel implements ItemModel {
     * @return book entity
     */
    private Book mapLineToBook(final String line) {
-      final Book book = new Book();
+
+      if(line == null) {
+         return null;
+      }
+
       final List<String> fields = csvUtils.lineToFields(line, CSV_DELIMITER);
 
       if (fields.size() == CSV_BOOK_COLUMN_SIZE) {
+         final Book book = new Book();
          final List<String> keys = csvUtils.lineToFields(fields.get(CSV_BOOK_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
          book.setAuthors(buildItemAuthorMap(keys));
          book.setTitle(fields.get(CSV_BOOK_TITLE_COLUMN_INDEX));
          book.setIsbn(new Isbn(fields.get(CSV_BOOK_ISBN_COLUMN_INDEX)));
          book.setDescription(fields.get(CSV_BOOK_BRIEFDESC_COLUMN_INDEX));
+         return book;
       }
 
-      return book;
+      return null;
    }
 
    /**
     * Maps a csv line (single data set) to a paper entity.
     * 
     * @param line a string containing a single csv data set
-    * @return paper entity
+    * @return paper entity or null in case line isn't valid data
     */
    private Paper mapLineToPaper(final String line) {
-      final Paper paper = new Paper();
+
+      if(line == null) {
+         return null;
+      }
+
       final List<String> fields = csvUtils.lineToFields(line, CSV_DELIMITER);
 
       if (fields.size() == CSV_PAPER_COLUMN_SIZE) {
+         final Paper paper = new Paper();
          final List<String> keys = csvUtils.lineToFields(fields.get(CSV_PAPER_AUTHOR_COLUMN_INDEX), AUTHOR_DELIMITER);
          paper.setAuthors(buildItemAuthorMap(keys));
          paper.setTitle(fields.get(CSV_PAPER_TITLE_COLUMN_INDEX));
@@ -116,10 +137,12 @@ public class CsvItemModel implements ItemModel {
             paper.setReleaseDate(RELEASE_DATE_FORMAT.parse(fields.get(CSV_PAPER_RELEASE_COLUMN_INDEX)));
          } catch (ParseException e) {
             System.err.println("Unable to parse release date: " + e.getMessage());
+            return null;
          }
+         return paper;
       }
 
-      return paper;
+      return null;
    }
 
    /**

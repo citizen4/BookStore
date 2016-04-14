@@ -109,6 +109,11 @@ public class CsvItemServiceTest {
       assertThat(itemService.findAll(), hasSize(7));
    }
 
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowIllegalArgumentException1() throws Exception {
+      itemService.findByAuthor("Harald", null);
+   }
+
    @Test
    public void shouldNotFindAnyItemByThatAuthorAndReturnEmptyList() throws Exception {
       assertThat(itemService.findByAuthor("Harald", "Rabe"), is(empty()));
@@ -122,6 +127,11 @@ public class CsvItemServiceTest {
    @Test
    public void shouldFindThreeItemsBySameAuthor() throws Exception {
       assertThat(itemService.findByAuthor("Werner", "Lieblich"), hasSize(3));
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowIllegalArgumentException2() throws Exception {
+      itemService.findByIsbn(null);
    }
 
    @Test

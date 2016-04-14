@@ -31,6 +31,9 @@ public class CsvAuthorModel implements AuthorModel {
     * @param dataDirectory the path to the data base directory
     */
    public CsvAuthorModel(final String dataDirectory) {
+      if(dataDirectory == null) {
+         throw new IllegalArgumentException("Data directory must not be null!");
+      }
       this.dataDirectory = dataDirectory;
    }
 
@@ -45,7 +48,9 @@ public class CsvAuthorModel implements AuthorModel {
 
       for (String line : authorLines) {
          final Author author = mapLineToAuthor(line);
-         resultMap.put(author.getEmail(), author);
+         if(author != null) {
+            resultMap.putIfAbsent(author.getEmail(), author);
+         }
       }
 
       return resultMap;
@@ -60,18 +65,24 @@ public class CsvAuthorModel implements AuthorModel {
     * Maps a csv line (single data set) to an author entity
     * 
     * @param line a string containing a single csv data set
-    * @return author entity
+    * @return author entity or null if line doesn't contain author data
     */
    private Author mapLineToAuthor(final String line) {
-      final Author author = new Author();
+
+      if(line == null) {
+         return null;
+      }
+
       final List<String> fields = csvUtils.lineToFields(line, CSV_DELIMITER);
 
       if (fields.size() == CSV_AUTHOR_COLUMN_SIZE) {
+         final Author author = new Author();
          author.setEmail(fields.get(CSV_AUTHOR_EMAIL_COLUMN_INDEX));
          author.setFirstName(fields.get(CSV_AUTHOR_FIRST_NAME_COLUMN_INDEX));
          author.setLastName(fields.get(CSV_AUTHOR_LAST_NAME_COLUMN_INDEX));
+         return author;
       }
 
-      return author;
+      return null;
    }
 }
