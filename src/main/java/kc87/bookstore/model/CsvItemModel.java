@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *   Map csv data to collections of item entities
+ * Map csv data to collections of item entities
  *
- *   @see kc87.bookstore.model.ItemModel for ducumentation
+ * @see kc87.bookstore.model.ItemModel for ducumentation
  */
 public class CsvItemModel implements ItemModel {
    private static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
@@ -52,14 +52,14 @@ public class CsvItemModel implements ItemModel {
     * @param dataDirectory the path to the data base directory
     */
    public CsvItemModel(final String dataDirectory) {
-      if(dataDirectory == null) {
+      if (dataDirectory == null) {
          throw new IllegalArgumentException("Data directory must not be null!");
       }
 
       this.dataDirectory = dataDirectory;
       this.authorModel = new CsvAuthorModel(dataDirectory);
    }
-   
+
 
    @Override
    public List<Item> getItemList() {
@@ -68,7 +68,7 @@ public class CsvItemModel implements ItemModel {
 
       for (String line : bookLines) {
          final Book book = mapLineToBook(line);
-         if(book != null) {
+         if (book != null) {
             itemList.add(book);
          }
       }
@@ -77,7 +77,7 @@ public class CsvItemModel implements ItemModel {
 
       for (String line : paperLines) {
          final Paper paper = mapLineToPaper(line);
-         if(paper != null) {
+         if (paper != null) {
             itemList.add(paper);
          }
       }
@@ -88,13 +88,13 @@ public class CsvItemModel implements ItemModel {
 
    /**
     * Maps a csv line (single data set) to a book entity
-    * 
+    *
     * @param line a string containing a single csv data set
     * @return book entity
     */
    private Book mapLineToBook(final String line) {
 
-      if(line == null) {
+      if (line == null) {
          return null;
       }
 
@@ -115,13 +115,13 @@ public class CsvItemModel implements ItemModel {
 
    /**
     * Maps a csv line (single data set) to a paper entity.
-    * 
+    *
     * @param line a string containing a single csv data set
     * @return paper entity or null in case line isn't valid data
     */
    private Paper mapLineToPaper(final String line) {
 
-      if(line == null) {
+      if (line == null) {
          return null;
       }
 
@@ -147,7 +147,7 @@ public class CsvItemModel implements ItemModel {
 
    /**
     * Returns a map containing all author entities defined by the given key list.
-    * 
+    *
     * @param keys the list of keys referencing authors (here the e-mail is used)
     * @return map of author entities
     */

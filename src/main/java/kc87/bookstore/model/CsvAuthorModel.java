@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *   Map csv data to collections of author entities
+ * Map csv data to collections of author entities
  *
- *   @see kc87.bookstore.model.AuthorModel for ducumentation
+ * @see kc87.bookstore.model.AuthorModel for ducumentation
  */
 public class CsvAuthorModel implements AuthorModel {
    /* Constants to parse the author CSV file structure */
@@ -31,7 +31,7 @@ public class CsvAuthorModel implements AuthorModel {
     * @param dataDirectory the path to the data base directory
     */
    public CsvAuthorModel(final String dataDirectory) {
-      if(dataDirectory == null) {
+      if (dataDirectory == null) {
          throw new IllegalArgumentException("Data directory must not be null!");
       }
       this.dataDirectory = dataDirectory;
@@ -48,7 +48,7 @@ public class CsvAuthorModel implements AuthorModel {
 
       for (String line : authorLines) {
          final Author author = mapLineToAuthor(line);
-         if(author != null) {
+         if (author != null) {
             resultMap.putIfAbsent(author.getEmail(), author);
          }
       }
@@ -63,13 +63,13 @@ public class CsvAuthorModel implements AuthorModel {
 
    /**
     * Maps a csv line (single data set) to an author entity
-    * 
+    *
     * @param line a string containing a single csv data set
     * @return author entity or null if line doesn't contain author data
     */
    private Author mapLineToAuthor(final String line) {
 
-      if(line == null) {
+      if (line == null) {
          return null;
       }
 

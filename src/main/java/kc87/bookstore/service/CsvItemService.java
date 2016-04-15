@@ -26,7 +26,7 @@ public class CsvItemService implements ItemService {
     */
    public CsvItemService(final ItemModel itemModel, final AuthorModel authorModel) {
 
-      if(itemModel == null || authorModel == null) {
+      if (itemModel == null || authorModel == null) {
          throw new IllegalArgumentException("Models must not be null!");
       }
 
@@ -42,7 +42,7 @@ public class CsvItemService implements ItemService {
    @Override
    public List<Item> findAllSorted(Comparator<Item> comparator) {
 
-      if(comparator == null) {
+      if (comparator == null) {
          throw new IllegalArgumentException("Comparator must not be null!");
       }
 
@@ -59,14 +59,14 @@ public class CsvItemService implements ItemService {
    @Override
    public List<Item> findByAuthor(final String firstName, final String lastName) {
 
-      if(firstName == null || lastName == null) {
+      if (firstName == null || lastName == null) {
          throw new IllegalArgumentException("Names must not be null!");
       }
 
       List<Author> authorList = authorModel.getAuthorList();
 
-      for(Author author: authorList) {
-         if(author.getFirstName().equalsIgnoreCase(firstName) &&
+      for (Author author : authorList) {
+         if (author.getFirstName().equalsIgnoreCase(firstName) &&
                  author.getLastName().equalsIgnoreCase(lastName)) {
             return findByAuthor(author.getEmail());
          }
@@ -78,7 +78,7 @@ public class CsvItemService implements ItemService {
    @Override
    public List<Item> findByAuthor(final String key) {
 
-      if(key == null) {
+      if (key == null) {
          throw new IllegalArgumentException("Key must not be null!");
       }
 
@@ -96,12 +96,11 @@ public class CsvItemService implements ItemService {
    @Override
    public Item findByIsbn(Isbn isbn) {
 
-      if(isbn == null) {
+      if (isbn == null) {
          throw new IllegalArgumentException("ISBN must not be null!");
       }
 
       for (Item item : findAll()) {
-         //System.out.println(item.getIsbn());
          if (item.getIsbn().equals(isbn)) {
             return item;
          }
