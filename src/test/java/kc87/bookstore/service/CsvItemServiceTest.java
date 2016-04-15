@@ -1,6 +1,8 @@
 package kc87.bookstore.service;
 
 import com.google.gson.Gson;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import kc87.bookstore.domain.Author;
 import kc87.bookstore.domain.Book;
 import kc87.bookstore.domain.Isbn;
@@ -11,18 +13,21 @@ import kc87.bookstore.model.ItemModel;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 /*
  * Unit tests for CsvItemService class
  * TODO: Write more test cases!
  */
+@RunWith(JUnitParamsRunner.class)
 public class CsvItemServiceTest {
 
    private static final List<Item> EMPTY_ITEM_LIST = new ArrayList<>();
@@ -50,7 +55,12 @@ public class CsvItemServiceTest {
            "{\"releaseDate\":\"May 1, 2007 12:00:00 AM\",\"type\":\"Paper\",\"title\":\"Kochen für Genießer\",\"authors\":{\"pr-walter@optivo.de\":{\"firstName\":\"Paul\",\"lastName\":\"Walter\",\"email\":\"pr-walter@optivo.de\"},\"pr-lieblich@optivo.de\":{\"firstName\":\"Werner\",\"lastName\":\"Lieblich\",\"email\":\"pr-lieblich@optivo.de\"}},\"isbn\":{\"value\":\"2365-5632-7854\"}}"
    };
 
+   private static final int ITEM_DATA_SIZE = BOOK_DATA_JSON.length + PAPER_DATA_JSON.length;
+
    /* Used to test correct sorting */
+   private static final Comparator<Item> ITEM_TITLE_COMPARATOR = (item1, item2) -> item1.getTitle().compareTo(item2.getTitle());
+
+   /*
    private static final String[] SORTED_TITLES = {
            "Das Perfekte Dinner. Die besten Rezepte",
            "Das große GU-Kochbuch",
@@ -59,12 +69,32 @@ public class CsvItemServiceTest {
            "Kochen für Genießer",
            "Meine Familie und ich",
            "Schöner kochen"
-   };
+   };*/
 
 
    private static AuthorModel authorModelMock = Mockito.mock(AuthorModel.class);
    private static ItemModel itemModelMock = Mockito.mock(ItemModel.class);
    private ItemService itemService;
+
+
+   @SuppressWarnings("unused")
+   private Object[] getFindByAuthorTestParameter() {
+      return new Object[]{
+              new Object[]{"", "", 0},
+              new Object[]{"Donald","Duck",0},
+              new Object[]{"Paul","Walter",4},
+              new Object[]{"Max","Müller",1}
+      };
+   }
+
+   @SuppressWarnings("unused")
+   private Object[] getFindByIsbnTestParameter() {
+      return new Object[] {
+              "2221-5548-8585",
+              "2365-5632-7854",
+              //"1234-5678-9876"
+      };
+   }
 
    @BeforeClass
    public static void setUpTestData() {
@@ -101,12 +131,12 @@ public class CsvItemServiceTest {
    @Test
    public void shouldFindNoItemsAndReturnEmptyList() throws Exception {
       Mockito.when(itemModelMock.getItemList()).thenReturn(EMPTY_ITEM_LIST);
-      assertThat(itemService.findAll(), is(empty()));
+      assertThat(itemService.findAll()).isNotNull().isEmpty();
    }
 
    @Test
    public void shouldFindAllItems() throws Exception {
-      assertThat(itemService.findAll(), hasSize(7));
+      assertThat(itemService.findAll()).isNotNull().hasSize(ITEM_DATA_SIZE);
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -115,18 +145,11 @@ public class CsvItemServiceTest {
    }
 
    @Test
-   public void shouldNotFindAnyItemByThatAuthorAndReturnEmptyList() throws Exception {
-      assertThat(itemService.findByAuthor("Harald", "Rabe"), is(empty()));
-   }
-
-   @Test
-   public void shouldFindOnlyOneItemBySameAuthor() throws Exception {
-      assertThat(itemService.findByAuthor("Max", "Müller"), hasSize(1));
-   }
-
-   @Test
-   public void shouldFindThreeItemsBySameAuthor() throws Exception {
-      assertThat(itemService.findByAuthor("Werner", "Lieblich"), hasSize(3));
+   @Parameters(method = "getFindByAuthorTestParameter")
+   public void shouldFindAllItemsBySameAuthor(String firstName, String lastName, int expectedSize) throws Exception {
+      assertThat(itemService.findByAuthor(firstName, lastName))
+              .isNotNull()
+              .hasSize(expectedSize);
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -135,28 +158,19 @@ public class CsvItemServiceTest {
    }
 
    @Test
-   public void shouldNotFindAnyItemByIsbnAndReturnNull() throws Exception {
-      Isbn isbn = new Isbn("1234-5678-9876");
-      assertThat(itemService.findByIsbn(isbn), is(nullValue()));
-   }
-
-   @Test
-   public void shouldFindBookByIsbn() throws Exception {
-      Item item = itemService.findByIsbn(new Isbn("2221-5548-8585"));
-      assertThat(item.getTitle(), equalToIgnoringCase("Das Perfekte Dinner. Die besten Rezepte"));
-   }
-
-   @Test
-   public void shouldFindPaperByIsbn() throws Exception {
-      Item item = itemService.findByIsbn(new Isbn("2547-8548-2541"));
-      assertThat(item.getTitle(), equalToIgnoringCase("Der Weinkenner"));
+   @Parameters(method = "getFindByIsbnTestParameter")
+   public void shouldFindItemByIsbn(String isbnStr) throws Exception {
+      final Isbn isbn = new Isbn(isbnStr);
+      Item item = itemService.findByIsbn(isbn);
+      assertThat(item).isNotNull();
+      assertThat(item.getIsbn()).isEqualTo(isbn);
    }
 
    @Test
    public void shouldReturnAllItemsSortedByTitle() throws Exception {
-      int i = 0;
-      for (Item item : itemService.findAllSortedByTitle()) {
-         assertThat(item.getTitle(), equalToIgnoringCase(SORTED_TITLES[i++]));
-      }
+      assertThat(itemService.findAllSortedByTitle())
+              .isNotNull()
+              .hasSize(ITEM_DATA_SIZE)
+              .isSortedAccordingTo(ITEM_TITLE_COMPARATOR);
    }
 }

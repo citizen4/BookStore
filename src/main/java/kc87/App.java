@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class App {
    public static final SimpleDateFormat RELEASE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-   //public static final String DATA_BASE_DIR = "/tmp/data";
-   public static final String DATA_BASE_DIR = "data";
+   public static final String DATA_BASE_DIR = "/tmp/data";
+   //public static final String DATA_BASE_DIR = "data";
 
    public static final ItemModel itemModel = new CsvItemModel(DATA_BASE_DIR);
    public static final AuthorModel authorModel = new CsvAuthorModel(DATA_BASE_DIR);
