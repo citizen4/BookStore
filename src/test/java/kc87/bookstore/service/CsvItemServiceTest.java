@@ -10,6 +10,7 @@ import kc87.bookstore.domain.Item;
 import kc87.bookstore.domain.Paper;
 import kc87.bookstore.model.AuthorModel;
 import kc87.bookstore.model.ItemModel;
+import org.assertj.core.api.AbstractAssert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,15 +18,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /*
  * Unit tests for CsvItemService class
- * TODO: Write more test cases!
  */
 @RunWith(JUnitParamsRunner.class)
 public class CsvItemServiceTest {
@@ -60,39 +60,67 @@ public class CsvItemServiceTest {
    /* Used to test correct sorting */
    private static final Comparator<Item> ITEM_TITLE_COMPARATOR = (item1, item2) -> item1.getTitle().compareTo(item2.getTitle());
 
-   /*
-   private static final String[] SORTED_TITLES = {
-           "Das Perfekte Dinner. Die besten Rezepte",
-           "Das große GU-Kochbuch",
-           "Der Weinkenner",
-           "Ich helf dir kochen.",
-           "Kochen für Genießer",
-           "Meine Familie und ich",
-           "Schöner kochen"
-   };*/
-
-
    private static AuthorModel authorModelMock = Mockito.mock(AuthorModel.class);
    private static ItemModel itemModelMock = Mockito.mock(ItemModel.class);
    private ItemService itemService;
 
 
+   private static class ItemListAssert extends AbstractAssert<ItemListAssert, List<Item>> {
+
+      private ItemListAssert(List<Item> itemList) {
+         super(itemList, ItemListAssert.class);
+      }
+
+      public static ItemListAssert assertThat(List<Item> itemList) {
+         return new ItemListAssert(itemList);
+      }
+
+      public ItemListAssert hasSize(final int expectedSize) {
+         org.assertj.core.api.Assertions.assertThat(actual).hasSize(expectedSize);
+         return this;
+      }
+
+      public ItemListAssert hasAuthor(final String firstName, final String lastName) {
+
+         isNotNull();
+
+         for (Item item : actual) {
+            final Collection<Author> authorList = item.getAuthors().values();
+            org.assertj.core.api.Assertions.assertThat(authorList).isNotNull();
+            for (Author author : authorList) {
+               if (author.getFirstName().equalsIgnoreCase(firstName) &&
+                       author.getLastName().equalsIgnoreCase(lastName)) {
+                  return this;
+               }
+            }
+         }
+
+         if (actual.size() > 0) {
+            failWithMessage("'%s %s' is not an author of item: %s", firstName, lastName, actual);
+         }
+
+         return this;
+      }
+   }
+
    @SuppressWarnings("unused")
    private Object[] getFindByAuthorTestParameter() {
       return new Object[]{
+              /* params:  first name, last name, expected result size */
               new Object[]{"", "", 0},
-              new Object[]{"Donald","Duck",0},
-              new Object[]{"Paul","Walter",4},
-              new Object[]{"Max","Müller",1}
+              new Object[]{"Donald", "Duck", 0},
+              new Object[]{"Paul", "Walter", 4},
+              new Object[]{"Max", "Müller", 1}
       };
    }
 
    @SuppressWarnings("unused")
    private Object[] getFindByIsbnTestParameter() {
-      return new Object[] {
-              "2221-5548-8585",
-              "2365-5632-7854",
-              //"1234-5678-9876"
+      return new Object[]{
+              /* params: ISBN, expected item type, expected title */
+              new Object[]{new Isbn("2221-5548-8585"), Item.Type.Book, "Das Perfekte Dinner. Die besten Rezepte"},
+              new Object[]{new Isbn("2365-5632-7854"), Item.Type.Paper, "Kochen für Genießer"},
+              new Object[]{new Isbn("1234-5678-9876"), Item.Type.NullItem, ""}
       };
    }
 
@@ -131,12 +159,17 @@ public class CsvItemServiceTest {
    @Test
    public void shouldFindNoItemsAndReturnEmptyList() throws Exception {
       Mockito.when(itemModelMock.getItemList()).thenReturn(EMPTY_ITEM_LIST);
-      assertThat(itemService.findAll()).isNotNull().isEmpty();
+      assertThat(itemService.findAll())
+              .isNotNull()
+              .isEmpty();
    }
 
    @Test
    public void shouldFindAllItems() throws Exception {
-      assertThat(itemService.findAll()).isNotNull().hasSize(ITEM_DATA_SIZE);
+      assertThat(itemService.findAll())
+              .isNotNull()
+              .hasSize(ITEM_DATA_SIZE)
+              .containsAll(testItemList);
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -147,8 +180,8 @@ public class CsvItemServiceTest {
    @Test
    @Parameters(method = "getFindByAuthorTestParameter")
    public void shouldFindAllItemsBySameAuthor(String firstName, String lastName, int expectedSize) throws Exception {
-      assertThat(itemService.findByAuthor(firstName, lastName))
-              .isNotNull()
+      ItemListAssert.assertThat(itemService.findByAuthor(firstName, lastName))
+              .hasAuthor(firstName, lastName)
               .hasSize(expectedSize);
    }
 
@@ -159,11 +192,11 @@ public class CsvItemServiceTest {
 
    @Test
    @Parameters(method = "getFindByIsbnTestParameter")
-   public void shouldFindItemByIsbn(String isbnStr) throws Exception {
-      final Isbn isbn = new Isbn(isbnStr);
-      Item item = itemService.findByIsbn(isbn);
-      assertThat(item).isNotNull();
-      assertThat(item.getIsbn()).isEqualTo(isbn);
+   public void shouldFindItemByIsbn(Isbn isbn, Item.Type expectedType, String expectedTitle) throws Exception {
+      assertThat(itemService.findByIsbn(isbn))
+              .isNotNull()
+              .hasFieldOrPropertyWithValue("type", expectedType)
+              .hasFieldOrPropertyWithValue("title", expectedTitle);
    }
 
    @Test
@@ -171,6 +204,7 @@ public class CsvItemServiceTest {
       assertThat(itemService.findAllSortedByTitle())
               .isNotNull()
               .hasSize(ITEM_DATA_SIZE)
+              .containsAll(testItemList)
               .isSortedAccordingTo(ITEM_TITLE_COMPARATOR);
    }
 }

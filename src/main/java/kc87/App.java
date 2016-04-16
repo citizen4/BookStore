@@ -76,7 +76,7 @@ public class App {
    public static void printItemByIsbn(final String isbnValue) {
       final Item result = itemService.findByIsbn(new Isbn(isbnValue));
 
-      if (result != null) {
+      if (result.getType() != Item.Type.NullItem) {
          System.out.println("Item found for ISBN '" + isbnValue + "':");
          printItem(result);
       } else {

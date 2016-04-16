@@ -3,6 +3,7 @@ package kc87.bookstore.service;
 import kc87.bookstore.domain.Author;
 import kc87.bookstore.domain.Isbn;
 import kc87.bookstore.domain.Item;
+import kc87.bookstore.domain.NullItem;
 import kc87.bookstore.model.AuthorModel;
 import kc87.bookstore.model.ItemModel;
 
@@ -106,6 +107,6 @@ public class CsvItemService implements ItemService {
          }
       }
 
-      return null;
+      return new NullItem();
    }
 }

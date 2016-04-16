@@ -7,13 +7,13 @@ import java.util.Map;
  * Abstract base class for Books and Papers
  */
 public abstract class Item {
-   protected Type type = Type.Item;
+   protected Type type = Type.NullItem;
    protected String title = "";
    protected Map<String, Author> authors = new HashMap<>();
    protected Isbn isbn = new Isbn("0000-0000-0000-0000");
 
    public enum Type {
-      Book, Paper, Item
+      Book, Paper, NullItem
    }
 
    public Item(final Type type) {
