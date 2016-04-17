@@ -22,7 +22,7 @@ public class CsvAuthorModel implements AuthorModel {
    private static final int CSV_AUTHOR_LAST_NAME_COLUMN_INDEX = 2;
    private static final String AUTHOR_DATA_FILE_NAME = "autoren.csv";
 
-   private CsvUtils csvUtils = new CsvUtils();
+   private CsvUtils csvUtils;
    private final String dataDirectory;
 
    /**
@@ -35,10 +35,7 @@ public class CsvAuthorModel implements AuthorModel {
          throw new IllegalArgumentException("Data directory must not be null!");
       }
       this.dataDirectory = dataDirectory;
-   }
-
-   public void setCsvUtils(final CsvUtils csvUtils) {
-      this.csvUtils = csvUtils;
+      this.csvUtils = newCsvUtils();
    }
 
    @Override
@@ -59,6 +56,15 @@ public class CsvAuthorModel implements AuthorModel {
    @Override
    public List<Author> getAuthorList() {
       return new ArrayList<>(getAuthorMap().values());
+   }
+
+   /**
+    * Encapsulate object creation, so it is "mockable" for unit testing
+    *
+    * @return instance of CsvUtils
+    */
+   protected CsvUtils newCsvUtils() {
+      return new CsvUtils();
    }
 
    /**

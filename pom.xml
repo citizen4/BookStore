@@ -15,9 +15,10 @@
 
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
-        <junitParams.version>1.0.4</junitParams.version>
+        <junitParams.version>1.0.5</junitParams.version>
         <!-- use 2.4.1 for Java 7 projects -->
         <assertj.version>3.4.1</assertj.version>
+        <powermock.version>1.6.4</powermock.version>
         <mockito.version>1.10.19</mockito.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -53,6 +54,20 @@
             <groupId>pl.pragmatists</groupId>
             <artifactId>JUnitParams</artifactId>
             <version>${junitParams.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
 
