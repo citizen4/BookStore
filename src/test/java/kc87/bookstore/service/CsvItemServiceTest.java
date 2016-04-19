@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /*
  * Unit tests for CsvItemService class
@@ -60,8 +61,8 @@ public class CsvItemServiceTest {
    /* Used to test correct sorting */
    private static final Comparator<Item> ITEM_TITLE_COMPARATOR = (item1, item2) -> item1.getTitle().compareTo(item2.getTitle());
 
-   private static AuthorModel authorModelMock = Mockito.mock(AuthorModel.class);
-   private static ItemModel itemModelMock = Mockito.mock(ItemModel.class);
+   private static AuthorModel authorModelMock = mock(AuthorModel.class);
+   private static ItemModel itemModelMock = mock(ItemModel.class);
    private ItemService itemService;
 
 
@@ -104,7 +105,7 @@ public class CsvItemServiceTest {
    }
 
    @SuppressWarnings("unused")
-   private Object[] getFindByAuthorTestParameter() {
+   private Object[] getAuthorTestParameter() {
       return new Object[]{
               /* params:  first name, last name, expected result size */
               new Object[]{"", "", 0},
@@ -115,7 +116,17 @@ public class CsvItemServiceTest {
    }
 
    @SuppressWarnings("unused")
-   private Object[] getFindByIsbnTestParameter() {
+   private Object[] getIllegalAuthorTestParameter() {
+      return new Object[]{
+              /* params:  first name, last name */
+              new Object[]{null, null},
+              new Object[]{"Donald", null},
+              new Object[]{null, "Walter"},
+      };
+   }
+
+   @SuppressWarnings("unused")
+   private Object[] getIsbnTestParameter() {
       return new Object[]{
               /* params: ISBN, expected item type, expected title */
               new Object[]{new Isbn("2221-5548-8585"), Item.Type.Book, "Das Perfekte Dinner. Die besten Rezepte"},
@@ -151,14 +162,15 @@ public class CsvItemServiceTest {
     */
    @Before
    public void setUp() throws Exception {
-      Mockito.when(authorModelMock.getAuthorList()).thenReturn(testAuthorList);
-      Mockito.when(itemModelMock.getItemList()).thenReturn(testItemList);
+      when(authorModelMock.getAuthorList()).thenReturn(testAuthorList);
+      when(itemModelMock.getItemList()).thenReturn(testItemList);
       itemService = new CsvItemService(itemModelMock, authorModelMock);
+      //MockitoAnnotations.initMocks(this);
    }
 
    @Test
    public void shouldFindNoItemsAndReturnEmptyList() throws Exception {
-      Mockito.when(itemModelMock.getItemList()).thenReturn(EMPTY_ITEM_LIST);
+      when(itemModelMock.getItemList()).thenReturn(EMPTY_ITEM_LIST);
       assertThat(itemService.findAll())
               .isNotNull()
               .isEmpty();
@@ -173,12 +185,13 @@ public class CsvItemServiceTest {
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowIllegalArgumentException1() throws Exception {
-      itemService.findByAuthor("Harald", null);
+   @Parameters(method = "getIllegalAuthorTestParameter")
+   public void shouldThrowIllegalArgumentExceptionWhenAnyNameIsNull(String firstName, String lastName) throws Exception {
+      itemService.findByAuthor(firstName, lastName);
    }
 
    @Test
-   @Parameters(method = "getFindByAuthorTestParameter")
+   @Parameters(method = "getAuthorTestParameter")
    public void shouldFindAllItemsBySameAuthor(String firstName, String lastName, int expectedSize) throws Exception {
       ItemListAssert.assertThat(itemService.findByAuthor(firstName, lastName))
               .hasAuthor(firstName, lastName)
@@ -186,12 +199,12 @@ public class CsvItemServiceTest {
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowIllegalArgumentException2() throws Exception {
+   public void shouldThrowIllegalArgumentExceptionWhenIsbnIsNull() throws Exception {
       itemService.findByIsbn(null);
    }
 
    @Test
-   @Parameters(method = "getFindByIsbnTestParameter")
+   @Parameters(method = "getIsbnTestParameter")
    public void shouldFindItemByIsbn(Isbn isbn, Item.Type expectedType, String expectedTitle) throws Exception {
       assertThat(itemService.findByIsbn(isbn))
               .isNotNull()

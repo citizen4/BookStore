@@ -52,7 +52,7 @@ public interface ItemService {
    /**
     * Find and return an item using a given ISBN
     *
-    * @param isdn the ISBN to look for
+    * @param isbn the ISBN to look for
     * @return the found item or null if there is no item matching the given ISBN
     */
    Item findByIsbn(final Isbn isbn);
