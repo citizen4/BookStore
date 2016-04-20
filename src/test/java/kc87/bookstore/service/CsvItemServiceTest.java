@@ -1,6 +1,8 @@
 package kc87.bookstore.service;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import kc87.bookstore.domain.Author;
@@ -15,8 +17,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -31,10 +36,14 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnitParamsRunner.class)
 public class CsvItemServiceTest {
 
+   private static final String AUTHOR_TEST_DATA_PATH = "src/test/resources/authors.json";
+   private static final String BOOK_TEST_DATA_PATH = "src/test/resources/books.json";
+   private static final String PAPER_TEST_DATA_PATH = "src/test/resources/papers.json";
    private static final List<Item> EMPTY_ITEM_LIST = new ArrayList<>();
    private static List<Author> testAuthorList;
    private static List<Item> testItemList;
 
+   /*
    private static final String[] AUTHOR_DATA_JSON = {
            "{\"firstName\":\"Paul\",\"lastName\":\"Walter\",\"email\":\"pr-walter@optivo.de\"}",
            "{\"firstName\":\"Werner\",\"lastName\":\"Lieblich\",\"email\":\"pr-lieblich@optivo.de\"}",
@@ -42,6 +51,7 @@ public class CsvItemServiceTest {
            "{\"firstName\":\"Harald\",\"lastName\":\"Rabe\",\"email\":\"pr-rabe@optivo.de\"}",
            "{\"firstName\":\"Max\",\"lastName\":\"Müller\",\"email\":\"pr-mueller@optivo.de\"}",
    };
+   */
 
    private static final String[] BOOK_DATA_JSON = {
            "{\"description\":\"Auf der Suche nach...\",\"type\":\"Book\",\"title\":\"Ich helf dir kochen.\",\"authors\":{\"pr-walter@optivo.de\":{\"firstName\":\"Paul\",\"lastName\":\"Walter\",\"email\":\"pr-walter@optivo.de\"}},\"isbn\":{\"value\":\"5554-5545-4518\"}}",
@@ -61,8 +71,10 @@ public class CsvItemServiceTest {
    /* Used to test correct sorting */
    private static final Comparator<Item> ITEM_TITLE_COMPARATOR = (item1, item2) -> item1.getTitle().compareTo(item2.getTitle());
 
-   private static AuthorModel authorModelMock = mock(AuthorModel.class);
-   private static ItemModel itemModelMock = mock(ItemModel.class);
+   @Mock
+   private AuthorModel authorModelMock;
+   @Mock
+   private ItemModel itemModelMock;
    private ItemService itemService;
 
 
@@ -136,24 +148,32 @@ public class CsvItemServiceTest {
    }
 
    @BeforeClass
-   public static void setUpTestData() {
-      Gson gson = new Gson();
+   public static void setUpTestData() throws IOException {
+      final Gson gson = new Gson();
+      JsonReader reader = gson.newJsonReader(new FileReader(AUTHOR_TEST_DATA_PATH));
+      testAuthorList = gson.fromJson(reader, new TypeToken<List<Author>>() {
+      }.getType());
 
-      testAuthorList = new ArrayList<>();
+      reader = gson.newJsonReader(new FileReader(BOOK_TEST_DATA_PATH));
+      final List<Book> testBooks = gson.fromJson(reader, new TypeToken<List<Book>>() {
+      }.getType());
 
-      for (String authorJson : AUTHOR_DATA_JSON) {
-         testAuthorList.add(gson.fromJson(authorJson, Author.class));
-      }
+      reader = gson.newJsonReader(new FileReader(PAPER_TEST_DATA_PATH));
+      final List<Book> testPapers = gson.fromJson(reader, new TypeToken<List<Paper>>() {
+      }.getType());
 
       testItemList = new ArrayList<>();
+      testItemList.addAll(testBooks);
+      testItemList.addAll(testPapers);
 
+      /*
       for (String bookJson : BOOK_DATA_JSON) {
          testItemList.add(gson.fromJson(bookJson, Book.class));
       }
 
       for (String paperJson : PAPER_DATA_JSON) {
          testItemList.add(gson.fromJson(paperJson, Paper.class));
-      }
+      }*/
    }
 
    /*
@@ -162,10 +182,11 @@ public class CsvItemServiceTest {
     */
    @Before
    public void setUp() throws Exception {
+      /* We can't use the Mockito Runner so we have to do it manually */
+      MockitoAnnotations.initMocks(this);
       when(authorModelMock.getAuthorList()).thenReturn(testAuthorList);
       when(itemModelMock.getItemList()).thenReturn(testItemList);
       itemService = new CsvItemService(itemModelMock, authorModelMock);
-      //MockitoAnnotations.initMocks(this);
    }
 
    @Test

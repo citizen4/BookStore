@@ -1,0 +1,27 @@
+[
+  {
+    "firstName": "Paul",
+    "lastName": "Walter",
+    "email": "pr-walter@optivo.de"
+  },
+  {
+    "firstName": "Werner",
+    "lastName": "Lieblich",
+    "email": "pr-lieblich@optivo.de"
+  },
+  {
+    "firstName": "Franz",
+    "lastName": "Ferdinand",
+    "email": "pr-ferdinand@optivo.de"
+  },
+  {
+    "firstName": "Harald",
+    "lastName": "Rabe",
+    "email": "pr-rabe@optivo.de"
+  },
+  {
+    "firstName": "Max",
+    "lastName": "Müller",
+    "email": "pr-mueller@optivo.de"
+  }
+]
